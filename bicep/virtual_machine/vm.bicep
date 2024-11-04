@@ -74,6 +74,9 @@ resource networkInterface 'Microsoft.Network/networkInterfaces@2024-03-01' = {
 resource vm 'Microsoft.Compute/virtualMachines@2024-07-01' = {
   name: virtualMachineName
   location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
   plan: {
     name: imageReference.sku
     product: imageReference.offer
@@ -108,3 +111,5 @@ resource vm 'Microsoft.Compute/virtualMachines@2024-07-01' = {
 
   }
 }
+
+output serviceAssignedIdentityPrincipalId string = vm.identity.principalId
