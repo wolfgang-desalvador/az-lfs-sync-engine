@@ -19,6 +19,7 @@ setenforce 0
 sed -i 's/SELINUX=.*$/SELINUX=disabled/g' /etc/selinux/config
 rm -rf /sbin/changelog-reader
 wget "https://github.com/edwardsp/LustreAzureSync/releases/download/v1.0.3/LustreAzureSync" -O /sbin/changelog-reader
+chmod +x /sbin/changelog-reader
 lustremetasync_systemd_file="/lib/systemd/system/lustremetasync.service"
 cat <<EOF > $lustremetasync_systemd_file
 [Unit]

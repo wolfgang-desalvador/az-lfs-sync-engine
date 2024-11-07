@@ -46,20 +46,18 @@ EOF
 cat << EOF > /etc/az_lfs_hsm_remove.json
 {
     "accountURL": "https://${storage_account}.blob.core.windows.net/",
-    "containerName": ${storage_container}
+    "containerName": "${storage_container}"
 }
 EOF
 
 cat << EOF > /etc/az_lfs_hsm_release.json
 {
     "accountURL": "https://${storage_account}.blob.core.windows.net/",
-    "containerName": ${storage_container}
+    "containerName": "${storage_container}"
 }
 EOF
 
 
-cd /root/
-rm -rf robinhood
 
 ######### Install Lustre Client including Devel. Please adjust version if newer is available
 yum groupinstall -y "Development Tools"
@@ -69,7 +67,11 @@ yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarc
 yum install -y jemalloc-devel
 yum remove mariadb-* -y
 yum install -y mysql-devel
+yum remove robinhood* -y
+yum remove robinhood-* -y
 
+cd /root/
+rm -rf robinhood
 
 git clone https://github.com/wolfgang-desalvador/robinhood.git
 cd robinhood
@@ -86,7 +88,7 @@ make rpm
 yum localinstall -y rpms/RPMS/x86_64/robinhood-*
 
 
-echo "${mysql_password}" > /etc/robinhood.d/.dbpassword
+echo ${mysql_password} > /etc/robinhood.d/.dbpassword
 chmod 600 /etc/robinhood.d/.dbpassword
 
 rbh_log_rotate_file="/etc/logrotate.d/robinhood"
@@ -177,9 +179,9 @@ ListManager
 
     MySQL
     {
-        server = ${mysql_server} ;
+        server = "${mysql_server}" ;
         db     = "lustre" ;
-        user   = ${mysql_username} ;
+        user   = "${mysql_username}" ;
         password_file = "/etc/robinhood.d/.dbpassword" ;
         # port   = 3306 ;
         # socket = "/tmp/mysql.sock" ;
@@ -274,7 +276,7 @@ ChangeLog
 
         # id of the persistent changelog reader
         # as returned by "lctl changelog_register" command
-        reader_id = ${changelogId} ;
+        reader_id = "${changelogId}" ;
     }
 
     # clear changelog every 1024 records:
@@ -435,6 +437,9 @@ lhsm_remove_trigger
 }
 EOF
 
+mysql -u ${mysql_username} --password=$(cat /etc/robinhood.d/.dbpassword) -h ${mysql_server} -e "create database lustre;"
+dnf install azure-cli -y
+az mysql flexible-server parameter set --name sql_generate_invisible_primary_key --resource-group ${resource_group} --server-name ${mysql_username} --value OFF
 '''
 
 resource installRobinhood 'Microsoft.Compute/virtualMachines/runCommands@2024-07-01' = {

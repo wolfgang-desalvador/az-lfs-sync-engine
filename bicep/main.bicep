@@ -56,6 +56,9 @@ param mysqlAdminLogin string
 @secure()
 param mysqlAdminPassword string
 
+@description('MySQL Server Name')
+param mySqlServerName string
+
 
 @description('Deploy private DNS Zone')
 param deployZone bool = true
@@ -86,6 +89,7 @@ module mySql 'my_sql_flexible/mysql.bicep' = {
     virtualNetworkResourceGroupName: virtualNetworkResourceGroupName
     mysqlAdminPassword: mysqlAdminPassword
     deployZone: deployZone
+    mySqlServerName: mySqlServerName
   }
 }
 
@@ -131,6 +135,20 @@ resource roleAssignmentStorageBlobDataContributor 'Microsoft.Authorization/roleA
   }
 }
 
+resource mySqlServer 'Microsoft.DBforMySQL/flexibleServers@2024-02-01-preview' existing = {
+    name: mySqlServerName
+}
+
+
+resource roleAssignmentDatabaseContributor 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(virtualMachineName, 'b24988ac-6180-42a0-ab88-20f7382dd24c', resourceGroup().id)
+  scope: mySqlServer
+  properties: {
+    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
+    principalId: virtualMachine.outputs.serviceAssignedIdentityPrincipalId
+  }
+  dependsOn: [ mySqlServer ]
+}
 
 module installMetaSync 'install_lustre_meta_sync/install_lustre_meta_sync.bicep' = {
   name: 'install-metasync-${utcValue}'

@@ -22,7 +22,9 @@ param subnetName string
 @description('Virtual Network resource group name')
 param virtualNetworkResourceGroupName string
 
-var mySqlServerName = 'mysql${uniqueString(resourceGroup().id)}'
+@description('MySQL Server Name')
+param mySqlServerName string
+
 var privateEndpointName = '${mySqlServerName}-pe'
 var privateDnsZoneName = 'privatelink.mysql.database.azure.com'
 var pvtEndpointDnsGroupName = '${privateEndpointName}/mydnsgroupname'
@@ -133,3 +135,4 @@ resource pvtEndpointDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneG
 }
 
 output serverName string = mySqlServerName
+output server string = mySqlServer.id
