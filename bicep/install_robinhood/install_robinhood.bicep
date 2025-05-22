@@ -23,7 +23,7 @@ python3.8 -m venv /opt/az_lfs
 source /opt/az_lfs/bin/activate
 pip install --upgrade pip
 
-wget "https://github.com/wolfgang-desalvador/az-lfs-hsm-remove/releases/download/0.0.4/az_lfs_hsm_remove-0.0.4-py3-none-any.whl"
+wget "https://github.com/wolfgang-desalvador/az-lfs-hsm-remove/releases/download/0.0.5/az_lfs_hsm_remove-0.0.5-py3-none-any.whl"
 pip install az_lfs_hsm_remove-0.0.4-py3-none-any.whl
 
 wget "https://github.com/wolfgang-desalvador/az-lfs-hsm-release/releases/download/0.0.2/az_lfs_hsm_release-0.0.2-py3-none-any.whl" -O az_lfs_hsm_release-0.0.2-py3-none-any.whl
